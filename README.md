@@ -1,0 +1,2 @@
+# code
+code open all
