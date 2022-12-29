@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Queue</title>
+</head>
+
+<body>
+
+</body>
+<script>
+
+  class Queue {
+    index = null
+    viewIndex = null
+    maxLength = null
+    loop = null
+    list = null
+    constructor(args) {
+      const { length = 10, fill = null } = args
+      this.list = Array.from({ length }, () => (fill))
+      this.maxLength = length
+      this.index = 0
+      this.viewIndex = 0
+      this.loop = 0
+    }
+    push(item) {
+      this.list[this.index] = item
+      this.index++
+      if (this.index === this.maxLength) {
+        this.index = 0
+        this.loop++
+        console.log("循环" + this.loop);
+      }
+    }
+    get() {
+      const item = this.list[this.viewIndex]
+      this.viewIndex++
+      if (this.viewIndex === this.maxLength) {
+        this.viewIndex = 0
+      }
+      return item
+    }
+  }
+
+  const quene = new Queue({})
+  for (let index = 0; index < 1000; index++) {
+    quene.push(index)
+    console.log(quene.get(), index + "========>");
+    console.log(quene);
+  }
+    // quene.push('A1')
+    // quene.push('A2')
+    // quene.push('A3')
+    // quene.push('A4')
+    // // quene.push('A5')
+    // // quene.push('A6')
+    // // quene.push('A7')
+    // // quene.push('A8')
+    // // quene.push('A9')
+    // console.log(quene.get(), '0');
+    // console.log(quene.get(), '1');
+    // console.log(quene.get(), '2');
+    // // console.log(quene.get(), '3');
+    // // console.log(quene.get(), '4');
+    // // console.log(quene.get(), '5');
+    // // console.log(quene.get(), '6');
+    // // console.log(quene.get(), '7');
+    // // console.log(quene.get(), '8');
+    // // console.log(quene.get(), '9');
+    // console.log(quene);
+
+</script>
+
+</html>

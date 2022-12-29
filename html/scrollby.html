@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        * {
+            padding: 0;
+            margin: 0;
+        }
+
+        .wrap {
+            height: 500px;
+            overflow: auto;
+            width: 100%;
+            border: 1px solid;
+
+        }
+
+        .wrap-content {
+            height: 5000px;
+            width: 8000px;
+            background: linear-gradient(red, blue, green, yellow, grey, white, skyblue);
+
+        }
+
+        .scrollByBtn {
+            position: fixed;
+            right: 20px;
+            top: 0;
+        }
+    </style>
+</head>
+
+<body>
+    <button class="scrollByBtn">scrollBy</button>
+    <div class="wrap">
+        <div class="wrap-content"></div>
+    </div>
+</body>
+<script>
+    var wrap = document.getElementsByClassName("wrap")[0];
+    var scrollToBtn = document.getElementsByClassName("scrollByBtn")[0];
+    scrollToBtn.onclick = function () {
+        console.log('sfs');
+        console.dir(wrap);
+        let he = 10;
+        let timer = setInterval(() => {
+            he += 10
+            wrap.scrollTo(he, he)
+            console.log(he);
+            if (he >= 4000) {
+                clearInterval(timer)
+            }
+        }, 50)
+    }
+
+
+
+</script>
+
+</html>

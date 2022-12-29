@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <script>
+
+
+
+    class HashMap {
+      list = null
+      constructor(length = 8) {
+        this.list = Array.from({ length }, () => ({ next: null }))
+      }
+      hashKey(i) {
+        return i % this.list.length
+      }
+      set(key, val) {
+        let index = this.hashKey(key)
+        let queue = this.list[index]
+        while (queue.next) {
+          if (queue.next.key === key) {
+            queue.next.value = val
+            return true
+          } else {
+            queue = queue.next
+          }
+        }
+        queue.next = { key, value: val, next: null }
+      }
+      get(key) {
+        let index = this.hashKey(key)
+        let queue = this.list[index]
+        while (queue) {
+          if (queue.key === key) {
+            return queue.value
+          }
+          queue = queue.next
+        }
+        return null
+      }
+    }
+
+    const myhs = new HashMap()
+    myhs.set(0, "000000000000000000")
+    myhs.set(1, "111111111111111111")
+    myhs.set(2, "222222222222222222")
+    myhs.set(3, "333333333333333333")
+    myhs.set(4, "444444444444444444")
+    myhs.set(5, "555555555555555555")
+    myhs.set(6, "666666666666666666")
+    myhs.set(7, "777777777777777777")
+    myhs.set(8, "888888888888888888")
+    myhs.set(9, "999999999999999999")
+    myhs.set(10, "sdgsdgdfgsdfgsdf")
+    console.log(myhs);
+    console.log(myhs.get(9));
+    console.log(myhs.get(10));
+
+  </script>
+</body>
+
+</html>

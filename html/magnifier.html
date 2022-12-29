@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        * {
+            padding: 0;
+            margin: 0;
+        }
+
+        li {
+            list-style: none;
+        }
+
+        img {
+            vertical-align: top;
+        }
+
+        .wrap {
+            width: 1140px;
+            margin: 0 auto;
+            margin-top: 100px;
+            position: relative;
+        }
+
+        .wrapBox {
+            width: 400px;
+            height: 400px;
+            background-color: pink;
+            position: relative;
+        }
+
+        .wrapBox img {
+            width: 100%;
+            height: 100%;
+        }
+
+        .shadow {
+            width: 200px;
+            height: 200px;
+            background-color: rgba(0, 0, 0, 0.6);
+            position: absolute;
+            left: 0;
+            top: 0;
+
+            display: none;
+        }
+
+        .showBigImg {
+            width: 400px;
+            height: 400px;
+            float: left;
+            background-color: #0000004d;
+            overflow: hidden;
+            position: absolute;
+            left: 600px;
+            top: 0;
+
+            display: none;
+
+        }
+
+        .showBigImg img {
+            position: absolute;
+            z-index: -1;
+            width: 800px;
+            height: 800px;
+        }
+
+        .switchList {
+            width: 400px;
+            margin-top: 20px;
+            display: flex;
+        }
+
+        .switchList li {
+            flex: 1;
+            margin: 5px;
+            border: 1px solid transparent;
+        }
+
+        .switchList .active {
+            border-color: red;
+        }
+
+        .switchList li img {
+            width: 100%;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="wrap">
+        <div class="wrapBox">
+            <div class="shadow"></div>
+            <img class="smallImg" src="./images/small.jpg" alt="">
+        </div>
+        <ul class="switchList">
+            <li class="active"><img src="./images/small.jpg" bigImg="./images/big.jpg" alt=""></li>
+            <li><img src="./images/girlsmall1.jpg" bigImg="./images/girlbig1.jpg" alt=""></li>
+            <li><img src="./images/girlsmall2.jpg" bigImg="./images/girlbig2.jpg" alt=""></li>
+            <li><img src="./images/girlsmall3.jpg" bigImg="./images/girlbig3.jpg" alt=""></li>
+            <li><img src="./images/girlsmall4.jpg" bigImg="./images/girlbig4.jpg" alt=""></li>
+        </ul>
+        <div class="showBigImg">
+            <img class="bigImg" src="./images/big.jpg" alt="">
+        </div>
+    </div>
+</body>
+<script>
+    // 放大镜
+    // 1.比例关系   => 布局 /  scale
+    // shadow.clientWidth                smallImg            x       1
+    // ————————————————————    ==    —————————————————   =   ___ =  __
+    // showBigImg.clientWidth            bigImg              X       2 
+
+    // 200     400          1
+    // ———— =  ————      =  ————
+    // 400     ? (800)      2
+
+    // 2. 左边移动的是shadow   右边移动的是bigImg   
+    // 移动的距离也是等比例的  
+    // shadow移动的方向  和  bigImg移动的方向相反
+
+
+
+    // 为了用户体验  等页面所有内容加载完毕之后执行 
+    window.onload = function () {
+
+        var wrap = document.getElementsByClassName("wrap")[0];
+        var wrapBox = document.getElementsByClassName("wrapBox")[0];
+        var shadow = document.getElementsByClassName("shadow")[0];
+
+        var showBigImg = document.getElementsByClassName("showBigImg")[0];
+        var smallImg = document.getElementsByClassName("smallImg")[0];
+        var bigImg = document.getElementsByClassName("bigImg")[0];
+
+        var liList = document.querySelectorAll(".switchList  li");
+
+        var smallList = ["small.jpg", "girlsmall1.jpg", "girlsmall2.jpg", "girlsmall3.jpg", "girlsmall4.jpg"];
+        var bigList = ["big.jpg", "girlbig1.jpg", "girlbig2.jpg", "girlbig3.jpg", "girlbig4.jpg"];
+
+
+        var wrapBoxWidth = parseInt(getStyle(wrapBox, "width"));
+        var wrapBoxHeight = parseInt(getStyle(wrapBox, "height"));
+
+        var shadowWidth = parseInt(getStyle(shadow, "width"));
+        var shadowHeight = parseInt(getStyle(shadow, "height"));
+
+        var maxLeft = wrapBoxWidth - shadowWidth;
+        var maxTop = wrapBoxHeight - shadowHeight;
+        console.log(maxLeft, wrapBox.clientWidth, shadow.clientWidth);
+
+        // wrapBox.offsetLeft = 0  ? wrapBox的参照物父元素=>wrap  所以偏移为0
+        // 怎么解决  找wrap距离文档左边和上边的偏移
+        wrapBox.onmousemove = function (e) {
+            var e = e || window.event;
+
+            shadow.style.display = "block";
+            showBigImg.style.display = "block";
+
+            var x = e.pageX - wrap.offsetLeft - shadow.clientWidth / 2;
+            var y = e.pageY - wrap.offsetTop - shadow.clientHeight / 2;
+            // console.log(e.target, x, y);
+            // console.log(e.pageX, wrap.offsetLeft, shadow.clientWidth / 2);
+
+            // 缩放的比例
+            var scale = bigImg.clientWidth / smallImg.clientWidth;  // 2
+
+            if (x < 0) x = 0;
+            if (x > maxLeft) x = maxLeft;
+            if (y < 0) y = 0;
+            if (y > maxTop) y = maxTop;
+
+            shadow.style.left = x + "px";
+            shadow.style.top = y + "px";
+
+            bigImg.style.left = -scale * x + "px";
+            bigImg.style.top = -scale * y + "px";
+
+        }
+        wrapBox.onmouseleave = function () {
+            shadow.style.display = "none";
+            showBigImg.style.display = "none";
+        }
+
+        // tab栏滑动切换 
+        for (let i = 0; i < liList.length; i++) {
+            let li = liList[i];
+            li.onmouseover = function () {
+                for (var j = 0; j < liList.length; j++) {
+                    liList[j].className = "";
+                }
+                this.className = "active";
+
+                // 找图片和切图片
+                var smallImgUrl = smallList[i];
+                var bigImgUrl = bigList[i];
+
+                smallImg.src = "./images/" + smallImgUrl;
+                bigImg.src = "./images/" + bigImgUrl;
+
+
+
+            }
+        }
+
+
+        function getStyle(ele, attr) {
+            if (window.getComputedStyle) {
+                return window.getComputedStyle(ele)[attr];
+            } else {
+                return ele.currentStyle[attr];
+            }
+        }
+    }
+
+</script>
+
+</html>

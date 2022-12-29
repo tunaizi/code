@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <button onclick="addFun('a1')">添加函数a1</button>
+    <button onclick="addFun('a2')">添加函数a2</button>
+    <button onclick="addFun('a3')">添加函数a3</button>
+    <button onclick="delFun('a1')">删除函数a1</button>
+    <button onclick="delFun('a2')">删除函数a2</button>
+    <button onclick="delFun('a3')">删除函数a3</button>
+    <button onclick="dispatch()">改变触发更新</button>
+    <div>
+      a1
+      <span id="a1"></span>
+    </div>
+    <div>
+      a2
+      <span id="a2"></span>
+    </div>
+    <div>
+      a3
+      <span id="a3"></span>
+    </div>
+    <script>
+      class Subject {
+        queuedObservers = {};
+        typeof(v) {
+          const _toString = Object.prototype.toString;
+          return _toString.call(v).slice(8, -1);
+        }
+        observe(key, value) {
+          const self = this;
+          !Reflect.has(self.queuedObservers, key) &&
+            self.typeof(value) == "Function" &&
+            (self.queuedObservers[key] = value);
+          return Object.keys(self.queuedObservers);
+        }
+        unsubscribe(key) {
+          const self = this;
+          Reflect.has(self.queuedObservers, key) &&
+            delete self.queuedObservers[key];
+          return Object.keys(self.queuedObservers);
+        }
+        getMethod(target, key) {
+          if (key == "add") return this.observe.bind(this);
+          if (key == "del") return this.unsubscribe.bind(this);
+          return null;
+        }
+        constructor(obj = {}, funs = {}) {
+          const self = this;
+          if (self.typeof(obj) != "Object") obj = {};
+          if (self.typeof(funs) != "Object") funs = {};
+          Object.entries(funs).forEach(e => self.observe(...e));
+          return new Proxy(obj, {
+            set(target, key, value, receiver) {
+              let result = false;
+              if (!["add", "del"].includes(key)) {
+                result = Reflect.set(target, key, value, receiver);
+              }
+              Object.values(self.queuedObservers).forEach(fn => fn(target));
+              return result;
+            },
+            get: self.getMethod.bind(self)
+          });
+        }
+      }
+      function a1(msg) {
+        console.log(msg, "===a1");
+        document.getElementById("a1").innerHTML = msg.mock;
+      }
+      function a2(msg) {
+        document.getElementById("a2").innerHTML = msg.mock;
+        console.log(msg, "===a2");
+      }
+      function a3(msg) {
+        document.getElementById("a3").innerHTML = msg.mock;
+        console.log(msg, "===a3");
+      }
+
+      const obj = new Subject({ mock: null }, { a1 });
+
+      function addFun(key) {
+        obj.add(key, window[key]);
+      }
+
+      function delFun(key) {
+        obj.del(key);
+      }
+
+      function dispatch() {
+        let a4 = 9;
+        setInterval(() => {
+          obj.mock = a4++;
+        }, 2000);
+      }
+    </script>
+  </body>
+</html>

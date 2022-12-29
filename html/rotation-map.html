@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="../js/animate.js"></script>
+    <style>
+        * {
+            padding: 0;
+            margin: 0;
+        }
+
+        li {
+            list-style: none;
+        }
+
+        img {
+            vertical-align: top;
+        }
+
+        .wrapAll {
+            width: 1226px;
+            height: 460px;
+            margin: 0 auto;
+            margin-top: 100px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .slideBar {
+            height: 460px;
+            /* width: 4904px; */
+            width: max-content;
+            position: absolute;
+            left: 0;
+        }
+
+        .slideBar li {
+            width: 1226px;
+            float: left;
+        }
+
+
+        .dotList {
+            position: absolute;
+            right: 50px;
+            bottom: 20px;
+            display: flex;
+        }
+
+        .dotList li {
+            width: 15px;
+            height: 15px;
+            background-color: #fff;
+            margin: 5px;
+            border-radius: 50%;
+        }
+
+        .dotList .active {
+            background-color: rgb(231, 181, 15);
+        }
+
+        .left,
+        .right {
+            width: 45px;
+            height: 100px;
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            z-index: 999;
+            background-color: rgba(255, 255, 255, 0.8);
+        }
+
+        .left {
+            left: 5px;
+        }
+
+        .right {
+            right: 5px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="wrapAll">
+        <span class="left"></span>
+        <span class="right"></span>
+        <ul class="slideBar">
+            <li class="active"><img src="../images/1.jpg" alt=""></li>
+            <li><img src="../images/2.jpg" alt=""></li>
+            <li><img src="../images/2.jpg" alt=""></li>
+            <li><img src="../images/3.jpg" alt=""></li>
+            <li><img src="../images/4.jpg" alt=""></li>
+            <li class="active"><img src="../images/1.jpg" alt=""></li>
+        </ul>
+        <ul class="dotList">
+            <li class="active"></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+        </ul>
+    </div>
+</body>
+<script>
+    var wrapAll = document.querySelector(".wrapAll");
+    var slideBar = document.querySelector(".slideBar");
+    var slideBarList = document.querySelectorAll(".slideBar li");
+    var liList = document.querySelectorAll(".dotList li");
+
+    var left = document.querySelector('.left');
+    var right = document.querySelector('.right');
+
+    var slideWidth = slideBar.firstElementChild.clientWidth;
+    // console.log(slideWidth);
+
+    var index = 0;
+    var timer = null;
+    var isClick = false; // 是否已经被点击(默认没有)
+
+    autoPlay();
+
+    for (let i = 0; i < liList.length; i++) {
+        let li = liList[i];
+        li.onclick = function () {
+            index = i;
+            for (var j = 0; j < liList.length; j++) {
+                liList[j].className = "";
+            }
+            liList[i].className = "active";
+
+            // 运动  对应下标(i => 向左滚动的图片张数)
+            animate(slideBar, "left", -slideWidth * i, "fast");
+
+        }
+    }
+
+    left.onclick = function () {
+
+        if (isClick == true) { // 如果已经被点击 
+            return false;
+        }
+
+        isClick = true; // 已经被点击了 (只要本次运动没有结束  isClick=true)
+
+
+
+        index--;  // 0 1 2 3 4 (五张图片的下标   但是 liList 0 1 2 3  第五张会出问题 )
+        console.log(index);
+
+        // 向左连点(在运动还没有结束时就连续点击)
+
+        // 第一张 切到第五张  滚动到第四张
+
+        // 如果小于下标0  立即切第一张  滚动到第二张
+        if (index < 0) {  // 
+            index = slideBarList.length - 1;  // 第五张的下标
+            slideBar.style.left = -index * slideWidth + "px";  //   切到第五张
+            index--; // 滚动到第四张 
+        }
+
+
+
+        // 对应下标的liList变为活跃状态
+        for (var j = 0; j < liList.length; j++) {
+            liList[j].className = "";
+        }
+
+        // index == slideBarList.length - 1  如果是第五张,让第一个点变为活跃状态
+        liList[index == slideBarList.length - 1 ? 0 : index].className = "active";
+
+        animate(slideBar, "left", -slideWidth * index, "fast", function () {
+
+
+
+            // 每次运动完毕之后执行
+            isClick = false;
+
+            // 1. 第四张如何切换到第一张
+            // 直接切换 效果比较难看  
+
+            // 怎么解决 ? 障眼法 (在第四张之后 加一张和第一张一样的图片(第五张))
+            // 第四张  滚动到第五张  立即切换到 第一张
+
+            // 如果下标为第五张的下标   (第四张 滚动到了第五张  => 立即切换到 第一张 )
+            if (index == slideBarList.length - 1) {
+                index = 0;
+                slideBar.style.left = 0;
+            }
+        });
+    }
+
+    right.onclick = function () {
+
+        if (isClick == true) { // 如果已经被点击 
+            return false;
+        }
+
+        isClick = true; // 已经被点击了 (只要本次运动没有结束  isClick=true)
+
+        index++;  // 0 1 2 3 4 (五张图片的下标   但是 liList 0 1 2 3  第五张会出问题 )
+        console.log(index);
+
+        // 向右连点(在运动还没有结束时就连续点击) 
+
+        // 如果超过第五张  立即切第一张  滚动到第二张
+        if (index > slideBarList.length - 1) {  //  如果超过第五张
+            index = 0;
+            slideBar.style.left = 0;  //  立即切第一张 
+            index++; // 滚动到第二张  
+        }
+
+
+
+        // 对应下标的liList变为活跃状态
+        for (var j = 0; j < liList.length; j++) {
+            liList[j].className = "";
+        }
+
+        // index == slideBarList.length - 1  如果是第五张,让第一个点变为活跃状态
+        liList[index == slideBarList.length - 1 ? 0 : index].className = "active";
+
+        animate(slideBar, "left", -slideWidth * index, "fast", function () {
+
+            // 每次运动完毕之后执行
+            isClick = false;
+
+            // 1. 第四张如何切换到第一张
+            // 直接切换 效果比较难看  
+
+            // 怎么解决 ? 障眼法 (在第四张之后 加一张和第一张一样的图片(第五张))
+            // 第四张  滚动到第五张  立即切换到 第一张
+
+            // 如果下标为第五张的下标   (第四张 滚动到了第五张  => 立即切换到 第一张 )
+            if (index == slideBarList.length - 1) {
+                index = 0;
+                slideBar.style.left = 0;
+            }
+        });
+
+    }
+
+
+
+    wrapAll.onmouseenter = function () {
+        clearInterval(timer);
+    }
+
+    wrapAll.onmouseleave = function () {
+        autoPlay();
+    }
+
+
+    function autoPlay() {
+        clearInterval(timer);
+        timer = setInterval(function () {
+            index++;  // 0 1 2 3 4 (五张图片的下标   但是 liList 0 1 2 3  第五张会出问题 )
+
+            // 对应下标的liList变为活跃状态
+            for (var j = 0; j < liList.length; j++) {
+                liList[j].className = "";
+            }
+
+            // index == slideBarList.length - 1  如果是第五张,让第一个点变为活跃状态
+            liList[index == slideBarList.length - 1 ? 0 : index].className = "active";
+
+            animate(slideBar, "left", -slideWidth * index, "fast", function () {
+
+                // 每次运动完毕之后执行
+
+                // 1. 第四张如何切换到第一张
+                // 直接切换 效果比较难看  
+
+                // 怎么解决 ? 障眼法 (在第四张之后 加一张和第一张一样的图片(第五张))
+                // 第四张  滚动到第五张  立即切换到 第一张
+
+                // 如果下标为第五张的下标   (第四张 滚动到了第五张  => 立即切换到 第一张 )
+                if (index == slideBarList.length - 1) {
+                    index = 0;
+                    slideBar.style.left = 0;
+                }
+            })
+
+
+        }, 1000);
+    }
+
+
+
+
+
+
+</script>
+
+</html>

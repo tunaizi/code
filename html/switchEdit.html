@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>点击切换到编辑状态</title>
+    <style>
+      .my_input {
+        width: max-content;
+        display: none;
+        background-color: #dbdbdb;
+        height: 20px;
+      }
+      .input_span {
+        cursor: pointer;
+        display: block;
+        width: 100px;
+        background-color: #dbdbdb;
+        height: 40px;
+      }
+    </style>
+  </head>
+  <body>
+    <div style="width: 300px; background-color: #dbdbdb; height: 300px">
+      <input type="text" name="my_input" class="my_input" />
+      <span class="input_span">king</span>
+    </div>
+  </body>
+  <script>
+    var inp = document.getElementsByName('my_input')[0]
+    var spa = document.getElementsByClassName('input_span')[0]
+    spa.onclick = function () {
+      inp.value = this.textContent
+      this.style.display = 'none'
+      inp.style.display = 'block'
+    }
+    window.addEventListener('keydown', function (e) {
+      if (e.which === 13 && e.target === inp) {
+        bul.bind(inp)()
+      }
+    })
+    inp.onblur = function (e) {
+      spa.textContent = this.value
+      this.style.display = 'none'
+      spa.style.display = 'block'
+    }
+  </script>
+</html>
