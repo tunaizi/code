@@ -1,0 +1,9 @@
+.className111 {
+  color: green;
+  background: red;
+}
+
+.otherClassName {
+  /* composes: className111; */
+  color: yellow;
+}
