@@ -37,7 +37,8 @@ print(new_names)
 # -> ['ALICE', 'JERRY', 'WENDY', 'SMITH']
 
 
-def main():
+def main(e):
+    print(e)
     # for item in keyword.kwlist:
     #     if e >= 1:
     #         print(item)
@@ -57,4 +58,4 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    main('999999')
