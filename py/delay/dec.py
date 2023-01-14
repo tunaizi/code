@@ -12,29 +12,17 @@ def main(e):
     #         return true
     #     }
     # }
-    p = 1
-    fruits = ['apple', 'banana', 'cherry']
-    for x in fruits:
-        print(x)
+    #
 
-    fruits = ['apple', 'banana', 'cherry']
-    for x in fruits:
-        print(x)
-        if x == 'banana':
-            break
-
-        for x in range(2, 6):
-            print(x)
-        else:
-            print('Finally finished!')
-
-        a = 0
-        # a not in [9, 1]
-    # for p in range(16):
-    #     p = p << 2
-
-
-pass
+    # ks = {e: e for e in ['id', "um", "uw", "msg"]}
+    ks = [e.get('um') for e in [{'id': 3}, {"um": 4}, {
+        "uw": 1}, {"msg": 14}]if "um" in e]
+    print(ks)
+    # print(ks[0] == 3)
+    # print(ks.__dir__())
+    obj = {"k": 232}
+    print(obj['k'])
+    pass
 
 
 if __name__ == "__main__":
